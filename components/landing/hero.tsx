@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -37,10 +38,10 @@ export default function Hero() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          <button className="group px-8 py-4 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold text-lg hover:shadow-2xl hover:shadow-cyan-500/50 transition duration-300 flex items-center justify-center space-x-2">
-            <span>Start for Free</span>
+          <Link href="/dashboard" className="group px-8 py-4 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold text-lg hover:shadow-2xl hover:shadow-cyan-500/50 transition duration-300 flex items-center justify-center space-x-2">
+            <span>Start Analysis</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition duration-300" />
-          </button>
+          </Link>
           <button className="px-8 py-4 rounded-lg border border-white/20 text-white font-semibold text-lg hover:bg-white/10 hover:border-white/40 transition duration-300">
             Watch Demo
           </button>

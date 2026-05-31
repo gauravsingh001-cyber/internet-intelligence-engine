@@ -26,25 +26,25 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="#features" className="text-gray-300 hover:text-white transition duration-300">
+            <Link href="/#features" className="text-gray-300 hover:text-white transition duration-300">
               Features
             </Link>
-            <Link href="#search" className="text-gray-300 hover:text-white transition duration-300">
-              Search
+            <Link href="/#how-it-works" className="text-gray-300 hover:text-white transition duration-300">
+              How It Works
             </Link>
-            <Link href="#stats" className="text-gray-300 hover:text-white transition duration-300">
-              Stats
+            <Link href="/#benefits" className="text-gray-300 hover:text-white transition duration-300">
+              Benefits
             </Link>
-            <Link href="#contact" className="text-gray-300 hover:text-white transition duration-300">
-              Contact
+            <Link href="/dashboard" className="text-gray-300 hover:text-white transition duration-300">
+              Dashboard
             </Link>
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="px-6 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition duration-300">
-              Get Started
-            </button>
+            <Link href="/dashboard" className="px-6 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition duration-300">
+              Start Analysis
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -59,21 +59,21 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden pb-4 border-t border-white/10">
-            <Link href="#features" className="block py-2 text-gray-300 hover:text-white">
+            <Link href="/#features" className="block py-2 text-gray-300 hover:text-white">
               Features
             </Link>
-            <Link href="#search" className="block py-2 text-gray-300 hover:text-white">
-              Search
+            <Link href="/#how-it-works" className="block py-2 text-gray-300 hover:text-white">
+              How It Works
             </Link>
-            <Link href="#stats" className="block py-2 text-gray-300 hover:text-white">
-              Stats
+            <Link href="/#benefits" className="block py-2 text-gray-300 hover:text-white">
+              Benefits
             </Link>
-            <Link href="#contact" className="block py-2 text-gray-300 hover:text-white">
-              Contact
+            <Link href="/dashboard" className="block py-2 text-gray-300 hover:text-white">
+              Dashboard
             </Link>
-            <button className="w-full mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold">
-              Get Started
-            </button>
+            <Link href="/dashboard" className="w-full mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold block text-center">
+              Start Analysis
+            </Link>
           </div>
         )}
       </div>

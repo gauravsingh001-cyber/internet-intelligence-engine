@@ -1,6 +1,7 @@
 'use client';
 
 import { TrendingUp, Users, Zap, Globe } from 'lucide-react';
+import Link from 'next/link';
 
 const stats = [
   {
@@ -78,11 +79,11 @@ export default function Statistics() {
                 Ready to Transform Your Business?
               </h3>
               <p className="text-gray-300 mb-6">
-                Join thousands of companies that are using Internet Intelligence Engine to make smarter decisions faster.
+                Join companies using Internet Intelligence Engine to make smarter decisions faster.
               </p>
-              <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition duration-300">
+              <Link href="/dashboard" className="inline-block px-8 py-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition duration-300">
                 Get Started Free
-              </button>
+              </Link>
             </div>
             <div className="hidden md:block">
               <div className="relative">

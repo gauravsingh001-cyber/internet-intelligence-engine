@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Company } from '@/data/mockData';
