@@ -10,7 +10,22 @@ export async function GET(request: Request) {
   const query = normalizeQuery(rawQuery) || normalizeQuery(DEFAULT_QUERY);
 
   try {
+    console.info('[api.search.request]', {
+      rawQuery,
+      query,
+      hasAnakinApiKey: Boolean(process.env.ANAKIN_API_KEY?.trim()),
+      anakinApiKeyLength: process.env.ANAKIN_API_KEY?.trim().length ?? 0,
+      anakinBaseUrl: process.env.ANAKIN_API_BASE_URL ?? null,
+    });
+
     const result = await searchAnakin({ q: query, limit: 5 });
+
+    console.info('[api.search.success]', {
+      query,
+      source: result.source,
+      total: result.total,
+      status: result.status,
+    });
 
     return NextResponse.json(
       {
@@ -28,6 +43,13 @@ export async function GET(request: Request) {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error while searching.';
     const status = error && typeof error === 'object' && 'status' in error ? Number((error as { status?: number }).status) || 500 : 500;
+    const code = error && typeof error === 'object' && 'code' in error ? String((error as { code?: string }).code) : 'UNKNOWN_ERROR';
+
+    console.error('[api.search.error]', {
+      status,
+      code,
+      message,
+    });
 
     return NextResponse.json(
       {
@@ -38,6 +60,7 @@ export async function GET(request: Request) {
         source: 'error',
         status: 'error',
         warning: message,
+        code,
         isLoading: false,
       },
       { status }

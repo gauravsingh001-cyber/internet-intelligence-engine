@@ -24,6 +24,41 @@ export interface AnakinSearchResponse {
 
 const DEFAULT_BASE_URL = "https://api.anakin.io/v1";
 
+function getAnakinBaseUrl(): string {
+  return (process.env.ANAKIN_API_BASE_URL ?? DEFAULT_BASE_URL).trim().replace(/\/+$/, "");
+}
+
+function fingerprintSecret(value: string): string {
+  const trimmed = value.trim();
+
+  if (trimmed.length <= 10) {
+    return `<redacted:${trimmed.length}>`;
+  }
+
+  return `${trimmed.slice(0, 8)}...${trimmed.slice(-4)}`;
+}
+
+function readProviderMessage(payload: Record<string, unknown>): string | undefined {
+  const candidates = [
+    payload.message,
+    payload.error,
+    payload.detail,
+    payload.description,
+  ];
+
+  return candidates.find((candidate): candidate is string => typeof candidate === "string");
+}
+
+function readProviderCode(payload: Record<string, unknown>): string | undefined {
+  const candidates = [
+    payload.code,
+    payload.error_code,
+    payload.type,
+  ];
+
+  return candidates.find((candidate): candidate is string => typeof candidate === "string");
+}
+
 function createError(
   message: string,
   status = 500,
@@ -91,10 +126,17 @@ export async function searchAnakin(
     );
   }
 
-  const apiKey = process.env.ANAKIN_API_KEY;
+  const apiKey = process.env.ANAKIN_API_KEY?.trim();
+  const baseUrl = getAnakinBaseUrl();
 
   // Demo fallback
   if (!apiKey) {
+    console.warn("[anakin.search.config]", {
+      hasApiKey: false,
+      baseUrl,
+      source: "demo",
+    });
+
     return normalizeResponse(
       {
         results: [
@@ -120,24 +162,48 @@ export async function searchAnakin(
   }, 10000);
 
   try {
+    const url = `${baseUrl}/search`;
+    const body = {
+      prompt: query,
+      limit: request.limit ?? 5,
+    };
+
+    console.info("[anakin.search.request]", {
+      url,
+      method: "POST",
+      authHeader: "X-API-Key",
+      apiKeyFingerprint: fingerprintSecret(apiKey),
+      apiKeyLength: apiKey.length,
+      body,
+    });
+
     const response = await fetch(
-      `${process.env.ANAKIN_API_BASE_URL ?? DEFAULT_BASE_URL}/search`,
+      url,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-API-Key": apiKey.trim(),
+          "X-API-Key": apiKey,
         },
-        body: JSON.stringify({
-          prompt: query,
-          limit: request.limit ?? 5,
-        }),
+        body: JSON.stringify(body),
         cache: "no-store",
         signal: controller.signal,
       }
     );
 
     const rawText = await response.text();
+
+    console.info("[anakin.search.response]", {
+      status: response.status,
+      statusText: response.statusText,
+      contentType: response.headers.get("content-type"),
+      requestId:
+        response.headers.get("x-request-id") ??
+        response.headers.get("x-correlation-id") ??
+        response.headers.get("x-amzn-requestid") ??
+        null,
+      bodyPreview: rawText.slice(0, 500),
+    });
 
     if (!rawText) {
       throw createError(
@@ -161,12 +227,21 @@ export async function searchAnakin(
 
     if (!response.ok) {
       const body = typeof payload === 'object' && payload !== null ? payload as Record<string, unknown> : {};
+      const providerMessage = readProviderMessage(body);
+      const providerCode = readProviderCode(body);
+
+      console.error("[anakin.search.provider_error]", {
+        status: response.status,
+        providerCode: providerCode ?? null,
+        providerMessage: providerMessage ?? null,
+        apiKeyFingerprint: fingerprintSecret(apiKey),
+        baseUrl,
+      });
+
       throw createError(
-        (body?.message as string) ||
-          (body?.error as string) ||
-          "Anakin Search API returned an error.",
+        providerMessage ?? "Anakin Search API returned an error.",
         response.status,
-        "ANAKIN_API_ERROR"
+        providerCode ?? "ANAKIN_API_ERROR"
       );
     }
 

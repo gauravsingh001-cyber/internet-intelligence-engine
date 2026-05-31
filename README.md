@@ -73,6 +73,7 @@ Set your Anakin API key:
 
 ```bash
 ANAKIN_API_KEY=your_api_key_here
+ANAKIN_API_BASE_URL=https://api.anakin.io/v1
 ```
 
 Run the development server:
